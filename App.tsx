@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React,{useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -15,6 +15,10 @@ import {
   Text,
   useColorScheme,
   View,
+  Dimensions,
+  TouchableOpacity,
+  Button,
+  TextInput,
 } from 'react-native';
 
 import {
@@ -26,7 +30,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 type SectionProps = PropsWithChildren<{
-  title: string;
+  title?:string;
 }>;
 
 function Section({children, title}: SectionProps): React.JSX.Element {
@@ -54,56 +58,95 @@ function Section({children, title}: SectionProps): React.JSX.Element {
     </View>
   );
 }
-
 function App(): React.JSX.Element {
+  const [numOne, setNumOne] = useState<number | ''>('');
+  const [numTwo, setNumTwo] = useState<number | ''>('');
+  const [result, setResult] = useState<number | string>('');
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const handleCalculation = (operation: string) => {
+    if (numOne === '' || numTwo === '') {
+      setResult('Enter valid numbers');
+      return;
+    }
+
+    const numberOne = Number(numOne);
+    const numberTwo = Number(numTwo);
+
+    switch (operation) {
+      case 'add':
+        setResult(numberOne + numberTwo);
+        break;
+      case 'subtract':
+        setResult(numberOne - numberTwo);
+        break;
+      case 'multiply':
+        setResult(numberOne * numberTwo);
+        break;
+      case 'divide':
+        setResult(numberTwo !== 0 ? numberOne / numberTwo : 'Cannot divide by zero');
+        break;
+      default:
+        setResult('Invalid operation');
+    }
+  };
+
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <ScrollView style={backgroundStyle}>
+      <View style={styles.highlight}>
+        <Text style={styles.heading}>Calculator</Text>
+
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Enter First Number</Text>
+          <TextInput
+            placeholder="Enter number here"
+            style={styles.input}
+            keyboardType="numeric"
+            onChangeText={value => setNumOne(value)}
+            value={numOne.toString()}
+          />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Enter Second Number</Text>
+          <TextInput
+            placeholder="Enter number here"
+            style={styles.input}
+            keyboardType="numeric"
+            onChangeText={value => setNumTwo(value)}
+            value={numTwo.toString()}
+          />
+        </View>
+
+        <View style={styles.sectionContainer}>
+          <Button style={styles.button} title="Add" onPress={() => handleCalculation('add')} />
+          <Button style={styles.button} title="Subtract" onPress={() => handleCalculation('subtract')} />
+          <Button style={styles.button} title="Multiply" onPress={() => handleCalculation('multiply')} />
+          <Button style={styles.button} title="Divide" onPress={() => handleCalculation('divide')} />
+        </View>
+
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Result: {result}</Text>
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+    marginTop: 50,
+    paddingHorizontal: 120,
+    fontSize: 20,
+    backgroundColor:'red'
   },
   sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '600'
   },
   sectionDescription: {
     marginTop: 8,
@@ -112,7 +155,21 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+    backgroundColor:'red'
   },
+  input:{
+    backgroundColor: 'white'
+  },
+  heading:{
+    fontWeight:'bold',
+    fontSize: 60,
+    paddingBottom:10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  button:{
+    backgroundColor:'white'
+  }
 });
 
 export default App;
