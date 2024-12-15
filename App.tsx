@@ -12,7 +12,7 @@ import {
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-function App(): React.JSX.Element {
+function App() {
   const [numOne, setNumOne] = useState<string>('');
   const [numTwo, setNumTwo] = useState<string>('');
   const [result, setResult] = useState<number | string>('');
